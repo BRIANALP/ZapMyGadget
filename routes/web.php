@@ -2,91 +2,34 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Models\Job;
+use App\Http\Controllers\JobController;
 
-Route::get('/', function () {
-    return view('home');
+//Route::get('/', function () {
+ //   return view('home');
+//});
+Route::get('test',function(){
+    return new \App\Mail\JobPosted();
 });
 
-//Route::get('/job', function () {//function to be returned on visiting the about/on getting a get request to the about page, trigger the function.
-//   return 'Jobs page';
-//});//we return ARRAYS AND STRINGS INSTEAD OF VIEWS WHEN HANDLING APIS
+Route::view('/','home');
+Route::view('/about','about');
 
+/**Route::controller(JobController::class)->group(function(){
+    Route::get('/jobs',[JobController::class,'index']);
+    Route::get('/jobs/create',[JobController::class,'create']);
+    Route::get('/jobs/{job}', [JobController::class,'show']);
+    Route::get('/jobs/{job}/edit', [JobController::class,'edit']);
+    Route::post('/jobs',[JobController::class,'store']);
+    Route::patch('/jobs/{job}',[JobController::class,'update']);
+    Route::delete('/jobs/{job}',[JobController::class,'destroy']);
+});**/
 
-
-Route::get('/jobs',function (){
-    $jobs=Job::with('employer')->latest()->paginate(4);
-
-    return view('jobs.index', [
-        'jobs' => $jobs
-    ]);
-});
-
-Route::get('/jobs/create',function(){
-    return view('jobs.create');
-
-});
-
-
-Route::get('/jobs/{id}', function($id){
-
-        $job = Job::find($id);
-        return view('jobs.show',['job' => $job]);
-    });
-
-
-Route::get('/jobs/{id}/edit', function($id){
-
-    $job = Job::find($id);
-    return view('jobs.edit',['job' => $job]);
-});
-
-
-
-
-
-
-Route::post('/jobs',function(){
-    //dd(request()->all());confirms the request attributes.
-    request()->validate([
-        'title'=>['required','min:3'],  
-        'salary'=>['required','integer']
-    ]);
-    Job::create([
-        'title'=>request('title'),//these attributes are defined in the name attribute of the input tag.
-        'salary'=>request('salary'),
-        'employer_id'=>1
-    ]);
-    return redirect('/jobs'); 
-});
-
-
-    
-Route::patch('/jobs/{id}',function($id){
-    //dd(request()->all());confirms the request attributes.
-    request()->validate([
-        'title'=>['required','min:3'],  
-        'salary'=>['required','integer']
-    ]);
-
-    $job=Job::findorFail($id);
-
-    $job->update([
-        'title'=>request('title'),
-        'salary'=>request('salary')
-    ]);
-
-    return redirect('/jobs/'.$job->id); 
-});
-
-
-   
-Route::delete('/jobs/{id}',function($id){
-    //dd(request()->all());confirms the request attributes.
-    Job::findorFail($id)->delete();
-
-    return redirect('/jobs'); 
-});
-    
-
+//REFER TO LESSON 19 FOR MORE INFO
+Route::resource('job',JobController::class);
+//USED IN CASE YOU DON'T WANT TO USE ALL THE RESOURCE CONTROLLER ACTIONS
+/**Route::resource('jobs',JobController::class,[
+    'except'=>['edit']
+]);
+**/
 
  

@@ -8,7 +8,7 @@
         <h2 class="font-bold text-lg">{{$job['title']}}</h2>
 
         <p>
-            This job pays {{ $job['salary'] }} per year.
+            This job pays ${{ $job['salary'] }} per year.
         </p>
         <p class="text-green-500">
             Posted on {{$job['created_at']}} by {{$job->employer->employer_name}} 

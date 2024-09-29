@@ -23,7 +23,7 @@
               <!--where to insert the for loop to facilitate adaptive change in color of the navlinks onclick-->
               <x-navlink href="/" :active="request()->is('/')">Homepage</x-navlink>
               <x-navlink href="/jobs" :active="request() -> is('jobs')">Jobs</x-navlink>
-              <x-navlink href="/careers" :active="request() -> is('careers')">Jobs</x-navlink>
+              <x-navlink href="/about" :active="request() -> is('about')">About Me</x-navlink>
             </div>
           </div>
         </div>
@@ -85,7 +85,7 @@
         <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
         <a href="/" class="block rounded-md bg-gray-900 px-3 py-2 text-base font-medium text-white" aria-current="page">Homepage</a>
         <a href="/jobs" class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Jobs</a>
-        <a href="/contact" class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Contact Us</a>
+        <a href="/about" class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">About Me</a>
 
       </div>
       <div class="border-t border-gray-700 pb-3 pt-4">

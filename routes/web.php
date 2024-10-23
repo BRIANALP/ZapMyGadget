@@ -4,7 +4,6 @@ use Illuminate\Support\Facades\Route;
 use App\Models\Job;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\JobPosted;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
 use App\Http\Controllers\JobController;

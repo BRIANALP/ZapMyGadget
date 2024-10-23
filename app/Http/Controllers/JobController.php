@@ -9,6 +9,7 @@ use App\Models\Job;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use App\Jobs\SendMailJob;
 
 
 
@@ -94,17 +95,21 @@ class JobController extends Controller
             'employer_id'=>1
         ]);
 
-       $user_mails=User::all()->pluck('email');
+       $user_mails=User::all()->pluck('email')->toArray();
      
         /**Mail::to($job->employer->user)->send(
         *   new JobPosted($job)
         *);
         **/
         
-        Mail::to($user_mails)->send(
+        /*
+        
+        Mail::to($user_mails)->queue(
             new JobPosted($job)
         );
-         
+        */
+
+        SendMailJob::dispatch($user_mails,$job);
     
         return redirect('/jobs');
     }

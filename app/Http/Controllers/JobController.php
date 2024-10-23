@@ -3,7 +3,15 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Mail\JobPosted;
+use Illuminate\Support\Facades\Mail;
 use App\Models\Job;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
+
+
+
 class JobController extends Controller
 {
     public function index(){
@@ -23,7 +31,26 @@ class JobController extends Controller
         return view('jobs.show',['job' => $job]);
     }
 
+
     public function edit(Job $job){
+
+        //Gate::define('edit-job',function(User $user, Job $job){
+        //    return $job->employer->user->is($user);
+        //});
+        
+        if (Auth::guest()) {
+            redirect('/login');
+        }
+        if($job->employer->user->isNot(Auth::user())){
+            abort(403);
+        }
+       // Gate::authorize('edit-job',$job);
+        //automatically generates the 403 error page if false.
+
+       //if(Gate::allows/denies('edit-job',$job)){
+            //user defined response. Might be a custom error page or a redirect
+        //};
+
         return view('jobs.edit',['job' => $job]);
     }
 
@@ -51,11 +78,24 @@ class JobController extends Controller
             'title'=>['required','min:3'],  
             'salary'=>['required','integer']
         ]);
-        Job::create([
+        $job=Job::create([
             'title'=>request('title'),//these attributes are defined in the name attribute of the input tag.
             'salary'=>request('salary'),
             'employer_id'=>1
         ]);
+
+       $user_mails=User::all()->pluck('email');
+     
+        /**Mail::to($job->employer->user)->send(
+        *   new JobPosted($job)
+        *);
+        **/
+        
+        Mail::to($user_mails)->send(
+            new JobPosted($job)
+        );
+         
+    
         return redirect('/jobs');
     }
 }

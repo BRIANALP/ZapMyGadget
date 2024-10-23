@@ -1,1 +1,4 @@
-Congrats! Your job is now live on our website. 
+<h2>
+    {{ $job->title }}
+</h2>
+<p>{{ $job->employer->user->name}} added the above job.</p>

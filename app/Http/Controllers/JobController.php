@@ -34,18 +34,27 @@ class JobController extends Controller
 
     public function edit(Job $job){
 
-        //Gate::define('edit-job',function(User $user, Job $job){
-        //    return $job->employer->user->is($user);
-        //});
-        
-        if (Auth::guest()) {
-            redirect('/login');
-        }
-        if($job->employer->user->isNot(Auth::user())){
-            abort(403);
-        }
-       // Gate::authorize('edit-job',$job);
-        //automatically generates the 403 error page if false.
+    /**  DEFINED IT IN THE APPSERVICE PROVIDER FOR GLOBAL ACCESS
+    *    Gate::define('edit-job',function(User $user, Job $job){
+    *          return $job->employer->user->is($user);
+    *      });//checks if the authorized user is the currently logged in user.
+    */
+    //THE GATE FACADE IMPLICITLY DOES THIS, ITS DOESN'T NEED TO BE DEFINED EXPLICITLY WHEN DALING WITH GATES.
+    /**  if (Auth::guest()) {
+    *        redirect('/login');
+    *}
+    */
+
+/**
+ *      if($job->employer->user->isNot(Auth::user())){
+ *          abort(403);
+ *       }
+ */
+ 
+       Gate::authorize('edit-job',$job);
+       //automatically generates the 403 error page if false.
+ 
+
 
        //if(Gate::allows/denies('edit-job',$job)){
             //user defined response. Might be a custom error page or a redirect
@@ -55,6 +64,7 @@ class JobController extends Controller
     }
 
     public function destroy(Job $job){
+        Gate::authorize('delete-job',$job);
         $job->delete();
         return redirect('/jobs'); 
     }

@@ -5,5 +5,5 @@
 <x-slot:heading>
     Hello World
 </x-slot:heading>
-I am your homepage    
+I am your homepage
 </x-layout>

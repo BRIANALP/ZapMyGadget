@@ -1,4 +1,4 @@
-<h2>
-    {{ $job->title }}
+<h2 class="font-sour font-bold">
+    {{ $job->device_model }}
 </h2>
-<p>{{ $job->employer->user->name}} added the above job.</p>
+<p class="font-garamond">Your issue has been successfully posted for review.</p>

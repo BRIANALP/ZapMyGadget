@@ -1,13 +1,10 @@
 <x-layout>
 
     <x-slot:title>Registration</x-slot:title>
-    <x-slot:heading>
-        Register
-    </x-slot:heading>
 
     <!-- Parent container -->
     <div class="flex items-center justify-center min-h-screen">
-        <form method='POST' action="/auth" class="bg-white p-8 rounded shadow-lg w-full max-w-lg">
+        <form method='POST' action="/auth" class="bg-orange p-8 rounded shadow-lg w-full max-w-lg">
             @csrf
             <div class="space-y-12">
                 <div class="border-b border-gray-900/10 pb-12">
@@ -25,8 +22,9 @@
                             </div>
                         </x-form-field>
 
+                    
                         <x-form-field>
-                            <x-form-label for="email">Email</x-form-label>
+                            <x-form-label for="email">Organization email</x-form-label>
                             <div class="mt-2">
                                 <x-form-input name="email" id="email" placeholder="Enter Email" required/>
                                 <!-- WE DON'T NEED THIS AS WE HAVE IMPORTED A VALIDATION LIBRARY

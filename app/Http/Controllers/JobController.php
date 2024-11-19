@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\JobApproved;
 use Illuminate\Http\Request;
 use App\Mail\JobPosted;
+use App\Mail\Response;
 use Illuminate\Support\Facades\Mail;
 use App\Models\Job;
 use App\Models\User;
+use App\Models\Employer;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use App\Jobs\SendMailJob;
@@ -21,8 +24,39 @@ class JobController extends Controller
         return view('jobs.index', [
             'jobs' => $jobs
     ]);
-
     }
+
+    public function devicesearch(Request $request)
+    {
+        $query=$request->input('query');
+        $results=Job::with('employer')->where('device_model','like', '%'.$query.'%')->get();
+        return view('search.results',[
+            'results'=> $results
+        ]);
+    }
+    public function companysearch(Request $request)
+    {
+        $query=$request->input('query2');
+        $results=Employer::with('jobs')->where('employer_name','like', '%'.$query.'%')->get();
+        return view('search.results2',[
+            'results'=> $results
+        ]);
+    }
+
+    public function search2(Request $request)
+    {
+        $query=$request->input('query2');
+        $results=Job::with('Employer')
+        ->where('organization','like', '%'.$query.'%')
+        ->get();
+        return view('search.results',[
+            'results'=> $results
+    ]);
+    }
+
+
+
+    
 
     public function create(){
         return view('jobs.create');
@@ -52,7 +86,7 @@ class JobController extends Controller
  *       }
  */
  
-       Gate::authorize('edit-job',$job);
+       Gate::authorize('respond-job',$job);
        //automatically generates the 403 error page if false.
  
 
@@ -65,52 +99,84 @@ class JobController extends Controller
     }
 
     public function destroy(Job $job){
-        Gate::authorize('delete-job',$job);
+        Gate::authorize('delete-job');
         $job->delete();
         return redirect('/jobs'); 
     }
 
     public function update(Job $job){
+     
         request()->validate([
-            'title'=>['required','min:3'],  
-            'salary'=>['required','integer']
+            'device_model'=>['required','min:3'],  
+            'issue'=>['required']
         ]);
     
         $job->update([
-            'title'=>request('title'),
-            'salary'=>request('salary')
+            'device_model'=>request('device_model'),
+            'issue'=>request('issue'),
+            'response'=>request('response'),
+            'billing'=>request('billing'),
+            'approval'=>request('approval')
         ]);
+
+        $user_mail=$job->employer->user->email;
+        if($job['response'] !== null && $job['approval']!== 'approved'){
+            SendMailJob::dispatch($user_mail,$job);
+        }
+        elseif($job['approval']==='approved'){
+            Mail::to('admin101@gmail.com')
+            ->queue(new JobApproved($job));
+        }
+
+        
     
-        return redirect('/jobs/'.$job->id); 
+        return redirect('/jobs/'.$job->id)->with('success','Job status has been successfully updated.'); 
 
     }
     public function store(){
         request()->validate([
-            'title'=>['required','min:3'],  
-            'salary'=>['required','integer']
+            'device_model'=>['required','min:3'],  
+            'issue'=>['required']
         ]);
+        $user_id=Auth::user()->id;
+        $email=Auth::user()->email;
+    
+        $domain = substr(strrchr($email, "@"), 1);
+        $employerId = null;
+        if($domain === 'wfp.org'){
+            $employerId = 1;
+        }elseif($domain === 'un.org'){
+            $employerId = 4;
+        }elseif($domain === 'gmail.com'){
+            $employerId = 3;
+            }
+      
+        
+        
         $job=Job::create([
-            'title'=>request('title'),//these attributes are defined in the name attribute of the input tag.
-            'salary'=>request('salary'),
-            'employer_id'=>1
+            'device_model'=>request('device_model'),//these attributes are defined in the name attribute of the input tag.
+            'issue'=>request('issue'),
+            'employer_id'=>$employerId,
+            'user_id'=>$user_id
         ]);
 
-       $user_mails=User::all()->pluck('email')->toArray();
+       //sect 1//$user_mails=User::all()->pluck('email')->toArray();
      
         /**Mail::to($job->employer->user)->send(
         *   new JobPosted($job)
         *);
         **/
         
-        /*
         
-        Mail::to($user_mails)->queue(
+        
+        Mail::to($email)->queue(
             new JobPosted($job)
         );
-        */
+        
 
-        SendMailJob::dispatch($user_mails,$job);
+        //sect1//SendMailJob::dispatch($user_mails,$job);
     
-        return redirect('/jobs');
+        return redirect('/')->with('success', 'Job has been successfully posted for review');
+
     }
 }

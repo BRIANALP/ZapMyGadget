@@ -1,3 +1,40 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.neon-text {
+    color: #fff;
+    font-size: 2rem;
+    text-align: center;
+    text-transform: uppercase;
+    font-family: 'Arial', sans-serif;
+    animation: neon 1.5s ease-in-out infinite alternate;
+}
+
+
+@keyframes neon {
+    from {
+        text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px 
+        , 0 0 40px teal, 
+                     0 0 70px teal, 0 0 80px teal, 0 0 100px teal, 0 0 150px teal;
+    }
+    to {
+        text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px teal, 0 0 20px teal, 
+                     0 0 35px teal, 0 0 40px teal, 0 0 50px teal, 0 0 75px teal;
+    }
+}
+
+.neon-box {
+    transition: box-shadow 0.3s ease, border 0.3s ease; /* Smooth transition */
+}
+
+.neon-box:hover {
+    border-color: #c59521; /* Adds a subtle border color */
+    box-shadow: 0 0 10px #a47416, 
+                0 0 20px #c59521, 
+                0 0 30px #eeba2b, 
+                0 0 40px #ffd04f, 
+                0 0 70px #ffe28a; /* Glowing neon effect */
+}
+
+

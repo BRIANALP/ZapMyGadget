@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 
 use App\Models\Employer;
+use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -14,7 +15,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        User::factory(17)->create();
 
         Employer::truncate();
         Employer::factory(5)->create();

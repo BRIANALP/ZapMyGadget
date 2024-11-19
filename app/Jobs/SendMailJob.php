@@ -9,24 +9,25 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\JobPosted;
+use App\Mail\Response;
 use App\Models\Job;
 
 class SendMailJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $user_mails;
+    protected $user_mail;
     protected $jobListing;
 
     /**
      * Create a new job instance.
      *
-     * @param  array  $user_mails
+     * @param  string  $user_mail
      * @param  \App\Models\Job  $job
      */
-    public function __construct(array $user_mails, Job $jobListing)
+    public function __construct(string $user_mail, Job $jobListing)
     {
-        $this->user_mails = $user_mails;
+        $this->user_mail = $user_mail;
         $this->jobListing = $jobListing;
     }
 
@@ -36,8 +37,8 @@ class SendMailJob implements ShouldQueue
     public function handle(): void
     {
         // Send the email to the list of users
-        Mail::to($this->user_mails)->send(
-            new JobPosted($this->jobListing)
+        Mail::to($this->user_mail)->send(
+            new Response($this->jobListing)
         );
     }
 }

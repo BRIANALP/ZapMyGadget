@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
 use App\Http\Controllers\JobController;
+use App\Http\Controllers\SearchController;
+
 
 //Route::get('/', function () {
  //   return view('home');
@@ -66,14 +68,19 @@ Route::post('/logout',function(User $user){
     return redirect('/');
 });
 
+
+
 //AUTHORIZATION TO PERFORM PARTICULAR CONTROLLER ACTIONS 
 Route::get('/jobs',[JobController::class,'index']);
 Route::get('/jobs/create',[JobController::class,'create']);
 Route::get('/jobs/{job}', [JobController::class,'show']);
-Route::get('/jobs/{job}/edit', [JobController::class,'edit'])->middleware('auth')->can('edit-job','job');
+Route::get('/devicesearch', [JobController::class, 'devicesearch']);
+Route::get('/companysearch', [JobController::class, 'companysearch']);
+Route::get('/jobs/{job}/edit', [JobController::class,'edit'])->middleware('auth')->can('respond-job','job');
 Route::post('/jobs',[JobController::class,'store']);
 Route::patch('/jobs/{job}',[JobController::class,'update']);
-Route::delete('/jobs/{job}',[JobController::class,'destroy'])->middleware('auth','can:delete-job,job');
+Route::delete('/jobs/{job}',[JobController::class,'destroy'])->middleware('auth','can:delete-job');
+
 
 //or
 /**Route::controller(JobController::class)->group(function(){

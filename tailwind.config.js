@@ -10,8 +10,15 @@ export default {
   theme: {
     extend: {
       colors: {
-        'javannifala':'green'
+        'teal':'#4fa0ab',
+        'orange':'#eeba2b',
+        'bluetheme': '#06061f',
+        'softteal' : '#84bcc4'
       },
+      fontFamily: {
+         'garamond': 'EB Garamond',
+         'sour' : 'Sour Gummy'
+      }
     },
   },
   plugins: [],

@@ -11,17 +11,9 @@
                 <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                     <x-form-field>
                         <x-form-label for="device_model">Device Model</x-form-label>
-                        <div class="mt-2">
-                            @can('edit-job',$job)
-                            <x-form-input name="device_model" id="device_model" placeholder="Enter the device's model" value="{{$job->device_model}}" 
-                            required/>
-                            @endcan
-
-                            @can('approve-job',$job)
+                        <div class="mt-2">                          
                             <x-form-input name="device_model" id="device_model" placeholder="Enter the device's model" value="{{$job->device_model}}" readonly 
                             required/>
-                            @endcan
-
                             <x-form-error name='device_model'>
                                 <p class='text-red-500 font-semibold text-sm'>Enter an appropriate device name</p>
                             </x-form-error>
@@ -30,14 +22,9 @@
 
                     <x-form-field>
                         <x-form-label for="issue">Issue</x-form-label>
-                        <div class="mt-2">
-                            @can('edit-job',$job)  
-                            <x-form-input name="issue" id="issue" value="{{$job->issue}}" placeholder="Edit device issue" required/>   
-                            @endcan
-
-                            @can('approve-job',$job)  
+                        <div class="mt-2">  
                             <x-form-input name="issue" id="issue" value="{{$job->issue}}" placeholder="Edit device issue" required readonly/>   
-                            @endcan
+                            
                             <x-form-error name='issue'>
                                 <p class='text-red-500 font-semibold text-sm'>Please describe the issue</p>
                             </x-form-error> 
@@ -51,7 +38,7 @@
                             <x-form-input name="response" id="response" value="{{$job->response}}" placeholder="To be resolved on ..."/>   
                             @endcan
 
-                            @can('approve-job',$job)
+                            @can('is-employer',$job)
                             <x-form-input name="response" id="response" value="{{$job->response}}" placeholder="To be resolved on ..." readonly/>   
                             @endcan
                         </div>
@@ -63,12 +50,26 @@
                             @can('edit-job',$job)
                             <x-form-input name="billing" id="billing" value="{{$job->billing}}" placeholder="Amount in Ksh"/>   
                             @endcan
-                            @can('approve-job',$job)
+                            @can('is-employer')
                             <x-form-input name="billing" id="billing" value="{{$job->billing}}" placeholder="Amount in Ksh" readonly/>   
                             @endcan
                         </div>
                     </x-form-field>  
-                    @can('approve-job',$job)   
+                    @can('edit-job',$job)   
+                    <x-form-field>
+                    <x-form-label for="repair_status">Repair Status</x-form-label>
+                    <select 
+                        name="repair_status" 
+                        id="repair_status" 
+                        class="form-select rounded-md px-4 py-2 
+                        {{ $job->repair_status === 'repaired' ? 'bg-green-500' : ($job->repair_status === 'under service)' ? 'bg-red-500' : 'bg-blue-900') }}">
+                        <option value="repaired" {{ $job->repair_status === 'repaired' ? 'selected' : '' }}>Repaired</option>
+                        <option value="under service" {{ $job->repair_status === 'under service' ? 'selected' : '' }}>Under Service</option>
+                        <option value="pending" {{ $job->repair_status === null ? 'selected' : '' }}>Pending Approval</option>
+                    </select>
+                    </x-form-field>  
+                    @endcan
+                    @can('is-employer')  
                     <x-form-field>
                     <x-form-label for="approval">Approval Status</x-form-label>
                     <select 
@@ -81,7 +82,7 @@
                         <option value="pending" {{ $job->approval === null ? 'selected' : '' }}>Pending Approval</option>
                     </select>
                     </x-form-field>  
-                    @endcan
+                    <!--@endcan-->
                 </div>
             </div>
 

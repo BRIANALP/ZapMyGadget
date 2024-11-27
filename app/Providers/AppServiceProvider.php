@@ -6,6 +6,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 use App\Models\Job;
 use App\Models\User;
+use App\Models\Employer;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -23,7 +24,7 @@ class AppServiceProvider extends ServiceProvider
     {
         Model::preventLazyLoading();
 
-        Gate::define('edit-job',function(User $user, Job $job){//user object and job object
+        Gate::define('edit-job',function(User $user){//user object and job object
            $usermail=['admin101@gmail.com','briantech@gmail.com','marktech@gmail.com'];
            //return $user->is($job->employer->user) || $user->email===$usermail;//gate to open is user related to the job is the currently logged in user
           //can also be phrased as return $job->employer->user->is($user);
@@ -36,12 +37,20 @@ class AppServiceProvider extends ServiceProvider
             return $user->email===$usermail;
         });
 
-        Gate::define('approve-job',function(User $user, Job $job){
-            return $user->is($job->employer->user);
+    
+        Gate::define("post-job-only",function(User $user){
+            return Gate::denies("edit-job")&&Gate::denies("is-employer")&&Gate::denies('delete-job');
         });
 
-        Gate::define('respond-job',function($user,$job){
-            return Gate::allows('approve-job',$job)||Gate::allows('edit-job',$job);
+        
+
+        Gate::define('respond-job',function($job){
+            return Gate::allows('is-employer')||Gate::allows('edit-job',$job);
+        });
+
+        //Gate for employers
+        Gate::define('is-employer', function ($user) {
+            return Employer::where('user_id', $user->id)->exists();
         });
 
     }

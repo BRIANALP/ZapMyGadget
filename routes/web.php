@@ -60,7 +60,7 @@ Route::post('/session',function(){
     //regenerate session token
     request()->session()->regenerate();
 
-    return redirect('/jobs');
+    return redirect('/');
 });
 
 Route::post('/logout',function(User $user){
@@ -72,6 +72,8 @@ Route::post('/logout',function(User $user){
 
 //AUTHORIZATION TO PERFORM PARTICULAR CONTROLLER ACTIONS 
 Route::get('/jobs',[JobController::class,'index']);
+Route::get('/employer_jobs',[JobController::class,'employer_index']);
+Route::get('/employee_jobs',[JobController::class,'employee_index']);
 Route::get('/jobs/create',[JobController::class,'create']);
 Route::get('/jobs/{job}', [JobController::class,'show']);
 Route::get('/devicesearch', [JobController::class, 'devicesearch']);
@@ -80,7 +82,8 @@ Route::get('/jobs/{job}/edit', [JobController::class,'edit'])->middleware('auth'
 Route::post('/jobs',[JobController::class,'store']);
 Route::patch('/jobs/{job}',[JobController::class,'update']);
 Route::delete('/jobs/{job}',[JobController::class,'destroy'])->middleware('auth','can:delete-job');
-
+Route::get('/billings',[JobController::class,'billed_jobs']);
+Route::get('/view_billings',[JobController::class,'view_billings']);
 
 //or
 /**Route::controller(JobController::class)->group(function(){

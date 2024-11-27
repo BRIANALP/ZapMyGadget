@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Mail\JobApproved;
 use Illuminate\Http\Request;
 use App\Mail\JobPosted;
-use App\Mail\Response;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Mail;
 use App\Models\Job;
 use App\Models\User;
@@ -26,6 +26,34 @@ class JobController extends Controller
     ]);
     }
 
+    
+    public function employer_index(){
+        $employer=Employer::where('user_id',Auth::id())->first();
+        if($employer){
+            $jobs=Job::where('employer_id',$employer->id)
+            ->with('employer')
+            ->latest()
+            ->paginate(4);
+        }
+
+        return view('jobs.index',[
+            'jobs'=>$jobs
+        ]);
+    }
+
+    public function employee_index(){
+        $user_id=Auth::id();
+        $jobs=Job::where('user_id',$user_id)
+            ->with('employer')
+            ->latest()
+            ->paginate(4);
+            
+       
+        return view('jobs.index',[
+            'jobs'=>$jobs
+        ]);
+    }
+    
     public function devicesearch(Request $request)
     {
         $query=$request->input('query');
@@ -34,6 +62,16 @@ class JobController extends Controller
             'results'=> $results
         ]);
     }
+    public function billed_jobs()
+    {
+        $employer=Employer::where('user_id',Auth::user()->id)->first();
+        if($employer) {
+            $jobs=Job::where('repair_status','repaired');
+        }
+        return view('billing.billing',['jobs'=>$jobs]);
+    }
+
+
     public function companysearch(Request $request)
     {
         $query=$request->input('query2');
@@ -42,21 +80,7 @@ class JobController extends Controller
             'results'=> $results
         ]);
     }
-
-    public function search2(Request $request)
-    {
-        $query=$request->input('query2');
-        $results=Job::with('Employer')
-        ->where('organization','like', '%'.$query.'%')
-        ->get();
-        return view('search.results',[
-            'results'=> $results
-    ]);
-    }
-
-
-
-    
+ 
 
     public function create(){
         return view('jobs.create');
@@ -65,6 +89,7 @@ class JobController extends Controller
     public function show(Job $job){
         return view('jobs.show',['job' => $job]);
     }
+
 
 
     public function edit(Job $job){
@@ -116,7 +141,8 @@ class JobController extends Controller
             'issue'=>request('issue'),
             'response'=>request('response'),
             'billing'=>request('billing'),
-            'approval'=>request('approval')
+            'approval'=>request('approval'),
+            'repair_status'=>request('repair_status')
         ]);
 
         $user_mail=$job->employer->user->email;
@@ -138,8 +164,8 @@ class JobController extends Controller
             'device_model'=>['required','min:3'],  
             'issue'=>['required']
         ]);
-        $user_id=Auth::user()->id;
-        $email=Auth::user()->email;
+        $user_id=Auth::id();
+        $email=Auth::email();
     
         $domain = substr(strrchr($email, "@"), 1);
         $employerId = null;
@@ -178,5 +204,18 @@ class JobController extends Controller
     
         return redirect('/')->with('success', 'Job has been successfully posted for review');
 
+    }
+    public function view_billings()
+    {
+        $employer=Employer::where('user_id',Auth::user()->id)->first();
+        if($employer)
+        {
+          $jobs=Job::where('repair_status','repaired')->get();
+        }
+
+        return view('billing.billing',[
+            'jobs'=>$jobs,
+            'employer'=>$employer
+        ]);
     }
 }

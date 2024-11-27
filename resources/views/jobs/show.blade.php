@@ -4,7 +4,6 @@
     <heading class="font-bold text-3xl neon-text">
         Job Description
     </heading>
-    <h3></h3>
     <div class="space-y-5 font-garamond text-xl mt-5">    
         <h2 class="font-bold text-3xl">{{$job['device_model']}}</h2>
         <p>    
@@ -34,9 +33,9 @@
         @if ($job['approval']==='not approved' )
             <button class="bg-green-400 rounded-md px-4 py-2 font-semibold text-white">Not Approved</button>
         @endif
-
-
-
+       
+        
+        
     </div>
     
     @can('respond-job',$job)

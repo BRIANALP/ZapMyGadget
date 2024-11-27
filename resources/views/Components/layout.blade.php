@@ -28,7 +28,22 @@
             <div class="ml-10 flex items-baseline space-x-4">
               <x-navlink href="/" :active="request()->is('/')">Homepage</x-navlink>
               @auth
-              <x-navlink href="/jobs" :active="request() -> is('jobs')">Jobs</x-navlink>
+              <!--<x-navlink href="/jobs" :active="request() -> is('jobs')">Jobs</x-navlink>-->
+              @can('post-job-only')
+                  <x-navlink href="/employee_jobs" :active="request() -> is('employee_jobs')">My Jobs</x-navlink>
+              @endcan
+
+              @can('delete-job')
+                  <x-navlink href="/jobs" :active="request()->is('jobs')">Jobs</x-navlink>
+              @endcan
+
+        
+              
+              @can('is-employer')
+                <x-navlink href="/employer_jobs" :active="request() -> is('employer_jobs')">Jobs</x-navlink>
+              @endcan
+
+              
               @endauth
 
               @guest
@@ -51,10 +66,34 @@
         @endguest
 
         @auth
-        <form method="POST" action='/logout'>
-          @csrf
-          <x-button>Log out</x-button>
-        </form>
+          <div class="flex flex-row space-x-2">      
+      
+            
+              @php
+                $employer=App\Models\Employer::where('user_id',Auth::user()->id)->first();
+                $total_billings=0;
+                if($employer)
+                {
+                  $jobs=App\Models\Job::where('repair_status','repaired')->get();
+                  $total_billings=$jobs->sum('billing');
+                }
+              @endphp
+              @can('is-employer')
+              <form action="/view_billings">
+              <x-button type="submit">
+                  Current Billings: Ksh {{ $total_billings }}
+              </x-button>
+              </form>
+              
+             
+            @endcan
+         
+          <form method="POST" action='/logout'>
+            @csrf
+            <x-button>Log out</x-button>
+          </form>
+          </div>
+          
         @endauth
 
       </div>
@@ -72,10 +111,24 @@
           <x-navlink href="/register" :active="request()->is('register')">Register</x-navlink>
         @endguest
         @auth
+          <div class="flex flex-row">
+          @php
+              $jobs = \App\Models\Job::where('employer_id', auth()->user()->user_id)
+                                    ->where('repair_status', 'repaired')
+                                    ->get();
+
+              $total_billings = $jobs->sum('billings');
+          @endphp
+
+          <button class="bg-white rounded-md px-4 py-2 font-semibold text-black">
+              Current Billings: {{ $total_billings }}
+          </button>
           <form method="POST" action='/logout'>
             @csrf
             <x-button>Log out</x-button>
           </form>
+          </div>
+          
         @endauth
       </div>
     </div>

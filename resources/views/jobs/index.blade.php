@@ -4,10 +4,13 @@
         <form action="/devicesearch" method="GET" class="flex flex-row justify-between">
             <input class="rounded-xl bg-white/10 text-sm px-5 py-4 w-full max-w-xl" type="text" name="query" placeholder="Laptop model name....">
         </form>
-
+        @can('edit-job')
         <form action="/companysearch" method="GET" class="flex flex-row justify-between">
+        
             <input class="rounded-xl bg-white/10 text-sm px-5 py-4 w-full max-w-xl" type="text" name="query2" placeholder="Company name...">
+    
         </form>
+        @endcan
     </div>
     <div class="space-y-4">
         
@@ -38,7 +41,8 @@
                     
             </div>
         @endforeach   
-    </div>  
+    </div> 
+    
     <div>
         {{ $jobs->links() }}
     </div>

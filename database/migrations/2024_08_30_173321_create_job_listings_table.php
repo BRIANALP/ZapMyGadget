@@ -20,7 +20,9 @@ return new class extends Migration
             $table->string('response')->nullable();
             $table->integer('billing')->nullable();
             $table->integer('approval')->nullable();
+            $table->string('repair_status')->nullable();
             $table->timestamps();
+            $table->softDeletes();//its nullable by default
         });
     }
 

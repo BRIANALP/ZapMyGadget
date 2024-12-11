@@ -69,7 +69,7 @@
                     </select>
                     </x-form-field>  
                     @endcan
-                    @can('is-employer')  
+                    <!--@can('is-employer')-->  
                     <x-form-field>
                     <x-form-label for="approval">Approval Status</x-form-label>
                     <select 

@@ -33,10 +33,9 @@
                   <x-navlink href="/employee_jobs" :active="request() -> is('employee_jobs')">My Jobs</x-navlink>
               @endcan
 
-              @can('delete-job')
+              @can('edit-job')
                   <x-navlink href="/jobs" :active="request()->is('jobs')">Jobs</x-navlink>
               @endcan
-
         
               
               @can('is-employer')
